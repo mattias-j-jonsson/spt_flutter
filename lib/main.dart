@@ -56,55 +56,76 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+
   String tooltipMessage = 'start';
   String timeString = '00:00';
   int currentTick = 0;
-  int countdown = 5;
   bool timerStatus = false;
   Timer? timer;
 
   void _startTimer() {
-    if(!timerStatus){
-      tooltipMessage = 'stop';
-      timerStatus = true;
-      timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if(timer.tick < 6) {
-          setState(() {
-            countdown--;
-          });
-        } else {
-          tooltipMessage = 'start';
-          timerStatus = false;
-          countdown = 5;
-          timer?.cancel();
-          setState(() {
-        
-          });
-        }
-      });
-    } else {
-      tooltipMessage = 'start';
-      timerStatus = false;
-      countdown = 5;
-      timer?.cancel();
-      setState(() {
-        
-      });
-    }
+    // if(!timerStatus){
+    //   tooltipMessage = 'stop';
+    //   timerStatus = true;
+    //   timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    //     if(timer.tick < startValue+1) {
+    //       setState(() {
+    //         countdown--;
+    //       });
+    //     } else {
+    //       _stopTimer();
+    //     }
+    //   });
+    // } else {
+    //   _stopTimer();
+    // }
+    _holdingSPT();
   }
 
-  int _counter = 0;
 
-  void _incrementCounter() {
-      _counter++;
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
+  final startValue = 2;
+  late int countdown = startValue;
+  int noOfReps = 2;
+  late int repsLeft = noOfReps;
+  
+  void _holdingSPT(){
+    _countdownSPT(seconds: startValue, reps: noOfReps, isHold: true);
+  }
+
+  void _countdownSPT ({required seconds, 
+                      required int reps, required bool isHold}) {
+    countdown = seconds;
+    repsLeft = reps;
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if(countdown > 0) {
+        setState(() {
+          countdown--;
+        });
+      } else {
+        _stopTimer();
+        if(isHold){
+          _countdownSPT(seconds: 2*startValue, reps: reps, isHold: false);
+        } else if(reps > 1) {
+          reps--;
+          _countdownSPT(seconds: startValue, reps: reps, isHold: true);
+        } else {
+          repsLeft--; // just to get a '0' at the end
+        }
+      }
     });
   }
+
+  void _stopTimer() {
+    tooltipMessage = 'start';
+    timerStatus = false;
+    countdown = startValue;
+    timer?.cancel();
+    setState(() {
+      
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -147,6 +168,9 @@ class _MyHomePageState extends State<MyHomePage> {
               '$countdown'
             ),
             Text(
+              '$repsLeft'
+            ),
+            Text(
               timeString,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
@@ -155,9 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _startTimer,
-        // onPressed: _incrementCounter,
         tooltip: tooltipMessage,
-        // tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
