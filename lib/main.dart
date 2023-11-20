@@ -1,5 +1,8 @@
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -57,6 +60,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  // AUDIOPLAYER CODE
+  // final AudioPlayer player = AudioPlayer();
+  // final soundPath = 
+  //           '382765__miradeshazer__countdown-1-to-10-and-10-to-zero-female.mp3';
+
 
   String tooltipMessage = 'start';
   String timeString = '00:00';
@@ -64,34 +72,35 @@ class _MyHomePageState extends State<MyHomePage> {
   bool timerStatus = false;
   Timer? timer;
 
-  void _startTimer() {
-    // if(!timerStatus){
-    //   tooltipMessage = 'stop';
-    //   timerStatus = true;
-    //   timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-    //     if(timer.tick < startValue+1) {
-    //       setState(() {
-    //         countdown--;
-    //       });
-    //     } else {
-    //       _stopTimer();
-    //     }
-    //   });
-    // } else {
-    //   _stopTimer();
-    // }
-    _holdingSPT();
+  void _timerButton() {
+    if(!timerStatus) {
+      timerStatus = true;
+      tooltipMessage = 'stop';
+      _startTimer();
+    } else {
+      timerStatus = false;
+      tooltipMessage = 'start';
+      _stopTimer();
+    }
   }
 
+  void _startTimer() {
+    _countdownSPT(seconds: startValue, reps: noOfReps, isHold: true);
+  }
+
+  void _stopTimer() {
+    countdown = startValue;
+    timer?.cancel();
+    setState(() {
+      
+    });
+  }
 
   final startValue = 2;
   late int countdown = startValue;
   int noOfReps = 2;
   late int repsLeft = noOfReps;
-  
-  void _holdingSPT(){
-    _countdownSPT(seconds: startValue, reps: noOfReps, isHold: true);
-  }
+
 
   void _countdownSPT ({required seconds, 
                       required int reps, required bool isHold}) {
@@ -99,6 +108,9 @@ class _MyHomePageState extends State<MyHomePage> {
     repsLeft = reps;
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if(countdown > 0) {
+        if(countdown <= 4) {
+          SystemSound.play(SystemSoundType.alert);
+        }
         setState(() {
           countdown--;
         });
@@ -109,22 +121,15 @@ class _MyHomePageState extends State<MyHomePage> {
         } else if(reps > 1) {
           reps--;
           _countdownSPT(seconds: startValue, reps: reps, isHold: true);
-        } else {
+        } else { // Cleanup on exit final rep.
           repsLeft--; // just to get a '0' at the end
+          tooltipMessage = 'start';
+          timerStatus = false;
         }
       }
     });
   }
 
-  void _stopTimer() {
-    tooltipMessage = 'start';
-    timerStatus = false;
-    countdown = startValue;
-    timer?.cancel();
-    setState(() {
-      
-    });
-  }
 
 
   @override
@@ -178,7 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _startTimer,
+        onPressed: _timerButton,
         tooltip: tooltipMessage,
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
