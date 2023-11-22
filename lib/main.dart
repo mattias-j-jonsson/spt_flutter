@@ -87,7 +87,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _startTimer() {
-    _countdownSPT(seconds: startValue, reps: noOfReps, isHold: true);
+    setState(() {
+      countdown = 3;
+    });
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if(countdown > 0) {
+        setState(() {
+          countdown--;
+        });
+      } else {
+        _stopTimer();
+        _countdownSPT(seconds: startValue, reps: noOfReps-1, isHold: true);
+      }
+    });
+    // _countdownSPT(seconds: startValue, reps: noOfReps, isHold: true);
   }
 
   void _stopTimer() {
@@ -106,8 +119,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _countdownSPT ({required seconds, 
                       required int reps, required bool isHold}) {
-    countdown = seconds;
-    repsLeft = reps;
+    setState(() {
+      countdown = seconds;
+      repsLeft = reps;
+    });
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if(countdown > 0) {
         // if(countdown <= 4) {
@@ -120,11 +135,10 @@ class _MyHomePageState extends State<MyHomePage> {
         _stopTimer();
         if(isHold){
           _countdownSPT(seconds: 2*startValue, reps: reps, isHold: false);
-        } else if(reps > 1) {
+        } else if(reps > 0) {
           reps--;
           _countdownSPT(seconds: startValue, reps: reps, isHold: true);
         } else { // Cleanup on exit final rep.
-          repsLeft--; // just to get a '0' at the end
           tooltipMessage = 'start';
           timerStatus = false;
         }
@@ -132,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  final listValuesHold = <int>[5, 10, 15, 20, 30, 45];
+  final listValuesHold = <int>[2, 5, 10, 15, 20, 30, 45]; // 2 included for debugging
 
   late final menuEntriesHold = listValuesHold.map((e) => DropdownMenuEntry(value: e, label: e.toString())).toList();
 
