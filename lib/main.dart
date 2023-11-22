@@ -1,10 +1,12 @@
 // import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter/rendering.dart'; // För debugPaintSizeEnabled
 import 'dart:async';
 
 import 'package:flutter/services.dart';
 
 void main() {
+  // debugPaintSizeEnabled=true;
   runApp(const MyApp());
 }
 
@@ -32,7 +34,7 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Deemo Home Page'),
@@ -96,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  final startValue = 2;
+  int startValue = 2;
   late int countdown = startValue;
   int noOfReps = 2;
   late int repsLeft = noOfReps;
@@ -108,9 +110,9 @@ class _MyHomePageState extends State<MyHomePage> {
     repsLeft = reps;
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if(countdown > 0) {
-        if(countdown <= 4) {
-          SystemSound.play(SystemSoundType.alert);
-        }
+        // if(countdown <= 4) {
+        //   SystemSound.play(SystemSoundType.alert);
+        // }
         setState(() {
           countdown--;
         });
@@ -130,7 +132,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  final listValuesHold = <int>[5, 10, 15, 20, 30, 45];
 
+  late final menuEntriesHold = listValuesHold.map((e) => DropdownMenuEntry(value: e, label: e.toString())).toList();
+
+  final listValuesReps = List<int>.generate(60, (int index) => index+1, growable: false);
+
+  late final menuEntriesReps = listValuesReps.map((e) => DropdownMenuEntry(value: e, label: e.toString())).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -169,6 +177,33 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                DropdownMenu(
+                  label: const Text('Hold'),
+                  dropdownMenuEntries: menuEntriesHold,
+                  enabled: !timerStatus,
+                  onSelected: (int? selectedHold) {
+                    setState(() {
+                      startValue = selectedHold as int; // TODO: custom-val kraschar
+                    });
+                  },
+                  initialSelection: 10,
+                ),
+                DropdownMenu(
+                  label: const Text('Reps'),
+                  dropdownMenuEntries: menuEntriesReps,
+                  enabled: !timerStatus,
+                  onSelected: (int? selectedReps) {
+                    setState(() {
+                      noOfReps = selectedReps as int;
+                    });
+                  },
+                  initialSelection: 2,
+                )
+              ]
+            ),
             Text(
               '$countdown'
             ),
