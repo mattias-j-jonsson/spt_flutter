@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 // import 'package:flutter/rendering.dart'; // För debugPaintSizeEnabled
 import 'dart:async';
 
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart'; // för SystemSound
 
 void main() {
   // debugPaintSizeEnabled=true;
@@ -37,13 +37,27 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Deemo Home Page'),
+      home: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: const TabBar(
+              tabs: [Tab(text: 'Holding'), Tab(text: 'Power',)],
+            ),
+          ),
+          body: const TabBarView(
+            children: [
+              HoldSPTPage(title: 'Flutter Deemo Home Page'),
+              PowerSPTPage(title: 'Flutter Deeemo Home Page')],
+          ),
+        )
+      ),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class HoldSPTPage extends StatefulWidget {
+  const HoldSPTPage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -57,10 +71,10 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HoldSPTPage> createState() => _HoldSPTPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HoldSPTPageState extends State<HoldSPTPage> {
 
   // AUDIOPLAYER CODE
   // final AudioPlayer player = AudioPlayer();
@@ -111,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  int startValue = 2;
+  int startValue = 10;
   late int countdown = startValue;
   int noOfReps = 2;
   late int repsLeft = noOfReps;
@@ -156,12 +170,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
@@ -203,7 +211,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       startValue = selectedHold as int; // TODO: custom-val kraschar
                     });
                   },
-                  initialSelection: 10,
+                  initialSelection: startValue,
                 ),
                 DropdownMenu(
                   label: const Text('Reps'),
@@ -214,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       noOfReps = selectedReps as int;
                     });
                   },
-                  initialSelection: 2,
+                  initialSelection: noOfReps,
                 )
               ]
             ),
@@ -235,7 +243,44 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _timerButton,
         tooltip: tooltipMessage,
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
+
+class PowerSPTPage extends StatefulWidget {
+  const PowerSPTPage({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<PowerSPTPage> createState() => _PowerSPTPageState();  
+}
+
+class _PowerSPTPageState extends State<PowerSPTPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
+      ),
+      body: const Text('POWER SPT WILL HAPPEN HERE'),
+    );
+  }
+}
+
+// a splash screen to be shown right before training session begins
+// containing info about the length of the session
+/* class _splashScreen extends StatelessWidget{
+  const _splashScreen({required this.exerciseLength});
+
+  final Duration exerciseLength;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Text('${exerciseLength.inMinutes}'),
+    );  
+  }
+} */
