@@ -2,8 +2,10 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter/rendering.dart'; // För debugPaintSizeEnabled
 import 'dart:async';
-
 // import 'package:flutter/services.dart'; // för SystemSound
+
+
+
 
 void main() {
   // debugPaintSizeEnabled=true;
@@ -75,6 +77,9 @@ class HoldSPTPage extends StatefulWidget {
 }
 
 class _HoldSPTPageState extends State<HoldSPTPage> {
+  static int sHoldStateData = 10;
+  static int sRepsStateData = 2;
+
 
   // AUDIOPLAYER CODE
   // final AudioPlayer player = AudioPlayer();
@@ -84,7 +89,6 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
 
   String tooltipMessage = 'start';
   String timeString = '00:00';
-  int currentTick = 0;
   bool timerStatus = false;
   Timer? timer;
 
@@ -124,9 +128,9 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
     });
   }
 
-  int startValue = 10;
+  int startValue = sHoldStateData;
   late int countdown = startValue;
-  int noOfReps = 2;
+  int noOfReps = sRepsStateData;
   late int repsLeft = noOfReps;
 
 
@@ -206,9 +210,11 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
                   dropdownMenuEntries: menuEntriesHold,
                   enabled: !timerStatus,
                   onSelected: (int? selectedHold) {
-                    setState(() {
-                      startValue = selectedHold as int; // TODO: custom-val kraschar
-                    });
+                      if(selectedHold != null){
+                      setState(() {
+                        startValue = selectedHold as int; // todo: custom-val kraschar
+                      });
+                    }
                   },
                   initialSelection: startValue,
                 ),
@@ -217,9 +223,11 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
                   dropdownMenuEntries: menuEntriesReps,
                   enabled: !timerStatus,
                   onSelected: (int? selectedReps) {
-                    setState(() {
-                      noOfReps = selectedReps as int;
-                    });
+                    if(selectedReps != null){
+                      setState(() {
+                        noOfReps = selectedReps as int;
+                      });
+                    }
                   },
                   initialSelection: noOfReps,
                 )
@@ -250,6 +258,8 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
   void dispose() {
     super.dispose();
     timer?.cancel();
+    sHoldStateData = startValue;
+    sRepsStateData = noOfReps;
   }
 }
 
