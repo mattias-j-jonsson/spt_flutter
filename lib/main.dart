@@ -77,6 +77,8 @@ class HoldSPTPage extends StatefulWidget {
 }
 
 class _HoldSPTPageState extends State<HoldSPTPage> {
+  // two static variables that keep choices of Holds and Reps between
+  // tab switches. Is set in dispose().
   static int sHoldStateData = 10;
   static int sRepsStateData = 2;
 
@@ -212,7 +214,7 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
                   onSelected: (int? selectedHold) {
                       if(selectedHold != null){
                       setState(() {
-                        startValue = selectedHold as int; // todo: custom-val kraschar
+                        startValue = selectedHold; // todo: custom-val kraschar
                       });
                     }
                   },
@@ -225,7 +227,7 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
                   onSelected: (int? selectedReps) {
                     if(selectedReps != null){
                       setState(() {
-                        noOfReps = selectedReps as int;
+                        noOfReps = selectedReps;
                       });
                     }
                   },
@@ -273,6 +275,118 @@ class PowerSPTPage extends StatefulWidget {
 }
 
 class _PowerSPTPageState extends State<PowerSPTPage> {
+
+  bool timerStatus = false;
+  String tooltipMessage = 'start';
+  Timer? timer;
+  int countDown = 5;
+
+  _timerButton() {
+    if(!timerStatus) {
+      timerStatus = true;
+      tooltipMessage = 'stop';
+      _startSPT();
+    } else {
+      timerStatus = false;
+      tooltipMessage = 'start';
+      _stopTimer();
+    }
+  }
+
+  void _startSPT() {
+    setState(() {
+      countDown = 5;
+      repsLeft = reps;
+      holdsLeft = holdsPerRep;
+    });
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if(countDown > 0) {
+        setState(() {
+          countDown--;
+        });
+      } else {
+        _stopTimer();
+        _holdTimer();
+      }
+    });
+  }
+
+  void _stopTimer() {
+    timer?.cancel();
+  }
+
+  int reps = 5;
+  late int repsLeft = reps;
+  int holdsPerRep = 10;
+  late int holdsLeft = holdsPerRep;
+  int holdTime = 4;
+  int downTime = 2;
+  Duration restTime = const Duration(minutes: 3);
+
+  void _holdTimer(){
+    setState(() {
+      countDown = holdTime;
+    });
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if(countDown > 0) {
+        setState(() {
+          countDown--;
+        });
+      } else {
+        _stopTimer();
+        _downTimer();
+      }
+    });
+  }
+
+  void _downTimer() {
+    setState(() {
+      countDown = downTime;
+    });
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if(countDown > 0) {
+        setState(() {
+          countDown--;
+        });
+      } else {
+        _stopTimer();
+        if(holdsLeft > 0) {
+          setState(() {
+            holdsLeft--;
+          });
+          _holdTimer();
+        } else {
+          _restTimer();
+        }
+      }
+    });
+  }
+
+  void _restTimer() {
+    setState(() {
+      countDown = restTime.inSeconds;
+    });
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if(countDown > 0) {
+        setState(() {
+          countDown--;
+        });
+      } else {
+        _stopTimer();
+        if(repsLeft > 0) {
+          setState(() {
+            repsLeft--;
+          });
+          _holdTimer();
+        } else {
+          // do nothing?
+        }
+      }
+    });
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -280,8 +394,35 @@ class _PowerSPTPageState extends State<PowerSPTPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: const Text('POWER SPT WILL HAPPEN HERE'),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Countdown: $countDown',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Text(
+              'Holds left: $holdsLeft',
+            ),
+            Text(
+              'Reps left: $repsLeft',
+            ),
+          ],
+        )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _timerButton,
+        tooltip: tooltipMessage,
+        child: const Icon(Icons.add),
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer?.cancel();
   }
 }
 
