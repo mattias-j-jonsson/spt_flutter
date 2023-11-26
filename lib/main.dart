@@ -165,6 +165,7 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
     });
   }
 
+
   final listValuesHold = <int>[2, 5, 10, 15, 20, 30, 45]; // 2 included for debugging
 
   late final menuEntriesHold = listValuesHold.map((e) => DropdownMenuEntry(value: e, label: e.toString())).toList();
@@ -236,13 +237,11 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
               ]
             ),
             Text(
-              '$countdown'
-            ),
-            Text(
               '$repsLeft'
             ),
             Text(
-              timeString,
+              Duration(seconds: countdown).toString().substring(2, 7),
+              textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
@@ -399,7 +398,7 @@ class _PowerSPTPageState extends State<PowerSPTPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Countdown: $countDown',
+              'Countdown: ' + Duration(seconds: countDown).toString().substring(2, 7),
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Text(
