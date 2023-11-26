@@ -29,31 +29,44 @@ class MyApp extends StatelessWidget {
         // and then invoke "hot reload" (save your changes or press the "hot
         // reload" button in a Flutter-supported IDE, or press "r" if you used
         // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-            bottom: const TabBar(
-              tabs: [Tab(text: 'Holding'), Tab(text: 'Power',)],
-            ),
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key}); // vet fortfarande inte varför detta ska göras
+
+  // final Animation<double> opacityValue = Animation<double>();
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        const Image(
+          image: AssetImage('assets/archery_female_shadow.png'),
+          height: 288,
+          width: 288,
+          isAntiAlias: false,
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => const HoldSPTPage(title: 'Holdtitle')));
+            },
+          child: const Text('hold'),
           ),
-          body: const TabBarView(
-            children: [
-              HoldSPTPage(title: 'Flutter Deemo Home Page'),
-              PowerSPTPage(title: 'Flutter Deeemo Home Page')],
+        ElevatedButton(
+          onPressed: (){
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => const PowerSPTPage(title: 'Powertitle')));
+          },
+          child: const Text('power')
           ),
-        )
-      ),
+      ],
     );
   }
 }
@@ -177,7 +190,7 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /* appBar: AppBar(
+      appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
@@ -185,7 +198,7 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
-      ), */
+      ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
@@ -390,8 +403,8 @@ class _PowerSPTPageState extends State<PowerSPTPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        // title: Text(widget.title),
       ),
       body: Center(
         child: Column(
