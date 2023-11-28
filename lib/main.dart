@@ -48,8 +48,8 @@ class HomePage extends StatelessWidget {
       children: <Widget>[
         const Image(
           image: AssetImage('assets/archery_female_shadow.png'),
-          height: 288,
-          width: 288,
+          height: 576,
+          width: 576,
           isAntiAlias: false,
         ),
         ElevatedButton(
@@ -84,16 +84,17 @@ class HoldSPTPage extends StatefulWidget {
   // always marked "final".
 
   final String title;
-
+  
   @override
   State<HoldSPTPage> createState() => _HoldSPTPageState();
 }
 
 class _HoldSPTPageState extends State<HoldSPTPage> {
   // two static variables that keep choices of Holds and Reps between
-  // tab switches. Is set in dispose().
+  // tab switches. Is updated in dispose().
   static int sHoldStateData = 10;
   static int sRepsStateData = 2;
+
 
 
   // AUDIOPLAYER CODE
@@ -218,6 +219,23 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                Duration(seconds: countdown).toString().substring(2, 7),
+                textAlign: TextAlign.center,
+                // style: Theme.of(context).textTheme.headlineLarge,
+                style: const TextStyle(fontSize: 72.0),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 3.0),
+              child: Text(
+                'Repetitions left: $repsLeft',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -228,7 +246,7 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
                   onSelected: (int? selectedHold) {
                       if(selectedHold != null){
                       setState(() {
-                        startValue = selectedHold; // todo: custom-val kraschar
+                        startValue = selectedHold;
                       });
                     }
                   },
@@ -249,22 +267,23 @@ class _HoldSPTPageState extends State<HoldSPTPage> {
                 )
               ]
             ),
-            Text(
-              '$repsLeft'
-            ),
-            Text(
-              Duration(seconds: countdown).toString().substring(2, 7),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineMedium,
+            Container(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: FloatingActionButton(
+                onPressed: _timerButton,
+                tooltip: tooltipMessage,
+                backgroundColor: const Color.fromARGB(255, 32, 175, 241),
+                child: Text(tooltipMessage),
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _timerButton,
-        tooltip: tooltipMessage,
-        child: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _timerButton,
+      //   tooltip: tooltipMessage,
+      //   child: const Icon(Icons.add),
+      // ),
     );
   }
 
