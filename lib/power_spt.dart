@@ -17,6 +17,14 @@ class _PowerSPTPageState extends State<PowerSPTPage> {
   Timer? timer;
   int countDown = 5;
 
+  int reps = 5;
+  late int repsLeft = reps;
+  int holdsPerRep = 1;
+  late int holdsLeft = holdsPerRep;
+  int holdTime = 4;
+  int downTime = 2;
+  Duration restTime = const Duration(minutes: 3);
+
   _timerButton() {
     if(!timerStatus) {
       timerStatus = true;
@@ -51,13 +59,7 @@ class _PowerSPTPageState extends State<PowerSPTPage> {
     timer?.cancel();
   }
 
-  int reps = 5;
-  late int repsLeft = reps;
-  int holdsPerRep = 10;
-  late int holdsLeft = holdsPerRep;
-  int holdTime = 4;
-  int downTime = 2;
-  Duration restTime = const Duration(minutes: 3);
+  
 
   void _holdTimer(){
     setState(() {
@@ -121,6 +123,11 @@ class _PowerSPTPageState extends State<PowerSPTPage> {
     });
   }
 
+  final listValuesReps = List<int>.generate(20, (i) => i+1, growable: false);
+  late final menuEntriesReps = listValuesReps.map((e) => DropdownMenuEntry(value: e, label: e.toString())).toList();
+
+  final listvaluesRestTime = List<Duration>.generate(7, (i) => Duration(seconds: 120+30*i));
+  late final menuEntriesRestTime = listvaluesRestTime.map((e) => DropdownMenuEntry(value: e, label: '${e.inMinutes}:${e.inSeconds%60 == 0 ? '00' : '30'}')).toList();
 
 
   @override
@@ -144,12 +151,55 @@ class _PowerSPTPageState extends State<PowerSPTPage> {
             Text(
               'Reps left: $repsLeft',
             ),
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 5.0),
+              child: ElevatedButton(
+                onPressed: _timerButton,
+                child: Text(tooltipMessage),
+                ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(top: 5.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    child: DropdownMenu(
+                      label: const Text('Reps'),
+                      dropdownMenuEntries: menuEntriesReps,
+                      initialSelection: reps,
+                      onSelected: (int? selectedReps) {
+                        if(selectedReps != null) {
+                          setState(() {
+                            reps = selectedReps;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  Container(
+                    child: DropdownMenu<Duration>(
+                      label: const Text('Resttime'),
+                      dropdownMenuEntries: menuEntriesRestTime,
+                      initialSelection: restTime,
+                      onSelected: (Duration? selectedRestTime) {
+                        if(selectedRestTime != null) {
+                          setState(() {
+                            restTime = selectedRestTime;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         )
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _timerButton,
-        tooltip: tooltipMessage,
+        onPressed: () {},
+        tooltip: 'ADD30',
         child: const Icon(Icons.add),
       ),
     );
