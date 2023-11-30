@@ -21,8 +21,8 @@ class HoldSPTPage extends StatefulWidget {
 }
 
 class _HoldSPTPageState extends State<HoldSPTPage> {
-  // two static variables that keep choices of Holds and Reps between
-  // tab switches. Is updated in dispose().
+  // static varibled to rember menu choices
+  // is updated in dispose()
   static int sHoldStateData = 10;
   static int sRepsStateData = 2;
 
